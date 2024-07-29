@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
 
 type TExpense = {
   id: number;
@@ -12,11 +14,17 @@ const fakeExpenses: TExpense[] = [
   { id: 3, title: "Expense 3", amount: 300 },
 ];
 
+const createPostSchema = z.object({
+  title: z.string(),
+  amount: z.number(),
+});
+type TCreatePostSchema = z.infer<typeof createPostSchema>;
+
 export const expenseRoute = new Hono()
   .get("/", (c) => {
     return c.json({ expenses: fakeExpenses });
   })
-  .post("/", async (c) => {
-    const expense = await c.req.json();
+  .post("/", zValidator("json", createPostSchema), async (c) => {
+    const expense = c.req.valid("json");
     return c.json(expense);
   });
