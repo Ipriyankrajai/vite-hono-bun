@@ -18,7 +18,6 @@ const createPostSchema = z.object({
   title: z.string(),
   amount: z.number(),
 });
-type TCreatePostSchema = z.infer<typeof createPostSchema>;
 
 export const expenseRoute = new Hono()
   .get("/", (c) => {
@@ -26,5 +25,11 @@ export const expenseRoute = new Hono()
   })
   .post("/", zValidator("json", createPostSchema), async (c) => {
     const expense = c.req.valid("json");
+    fakeExpenses.push({ ...expense, id: fakeExpenses.length + 1 });
     return c.json(expense);
+  })
+  .get("/:id", (c) => {
+    const id = c.req.param("id");
+    const expense = fakeExpenses.find((e) => e.id === Number(id));
+    return c.json({ expense });
   });
