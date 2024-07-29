@@ -1,6 +1,9 @@
-import { Hono } from 'hono'
-const app = new Hono()
+import { Hono } from "hono";
+import { logger } from "hono/logger";
 
-app.get('/', (c) => c.text('Hello, Hono!'))
+const app = new Hono();
 
-export default app
+app.use("*", logger());
+app.get("/", (c) => c.text("Hello, Hono!"));
+
+export default app;
