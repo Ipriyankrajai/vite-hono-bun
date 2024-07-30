@@ -26,6 +26,7 @@ export const expenseRoute = new Hono()
   .post("/", zValidator("json", createPostSchema), async (c) => {
     const expense = c.req.valid("json");
     fakeExpenses.push({ ...expense, id: fakeExpenses.length + 1 });
+    c.status(201);
     return c.json(expense);
   })
   .get("/:id{[0-9]+}", (c) => {
