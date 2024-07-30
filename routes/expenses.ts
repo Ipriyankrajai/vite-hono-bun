@@ -2,17 +2,13 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
-type TExpense = {
-  id: number;
-  title: string;
-  amount: number;
-};
-
 const expenseSchema = z.object({
   id: z.number().int().positive().min(1),
   title: z.string(),
   amount: z.number(),
 });
+
+type TExpense = z.infer<typeof expenseSchema>;
 
 const createPostSchema = expenseSchema.omit({ id: true });
 
